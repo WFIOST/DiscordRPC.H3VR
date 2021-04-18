@@ -1,9 +1,8 @@
 {
   /* Your mod name and authors */
-  "name": "Deli Example Mod",
+  "name": "Discord RPC",
   "authors": [
-    "Nathan Gill",
-    "AshHat"
+    "Frityet"
   ],
   
   /* 
@@ -11,7 +10,7 @@
    * Please do not prefix your GUID with "deli.". This is reserved for mods from the Deli Collective.
    * Version is in SemVer, so feel free to add some metadata (like git branch/hash).
    */
-  "guid": "deli.example_mod",
+  "guid": "com.wfiost.discordrpc.h3vr",
   "version": "1.0.0",
   
   /* 
@@ -38,8 +37,7 @@
      * Assets are resolved top down, so generally you'll want your assembly first.
      */
     "setup": {
-      "Deli.ExampleMod.dll": "deli:assembly",
-      "res/ExampleAsset1.txt": "deli.example_mod:example_asset"
+      "DiscordRPC.H3VR.dll": "deli:assembly"
     }
   }
 }
