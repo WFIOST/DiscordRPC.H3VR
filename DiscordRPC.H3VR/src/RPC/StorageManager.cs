@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Discord
+namespace DiscordRPC.Lib
 {
     public partial class StorageManager
     {

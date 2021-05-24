@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Discord
+namespace DiscordRPC.Lib
 {
     public partial class ActivityManager
     {

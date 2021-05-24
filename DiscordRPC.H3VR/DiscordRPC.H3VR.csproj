@@ -22,5 +22,11 @@
     <ItemGroup>
       <Folder Include="lib" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Reference Include="Assembly-CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>lib\Assembly-CSharp_publicized.dll</HintPath>
+      </Reference>
+    </ItemGroup>
 
 </Project>

@@ -1,10 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
-#if UNITY_EDITOR || UNITY_STANDALONE
 using UnityEngine;
-#endif
 
-namespace Discord
+namespace DiscordRPC.Lib
 {
 	public partial struct ImageHandle
     {
@@ -38,8 +36,6 @@ namespace Discord
             GetData(handle, data);
             return data;
         }
-
-#if UNITY_EDITOR || UNITY_STANDALONE
         public Texture2D GetTexture(ImageHandle handle)
         {
             var dimensions = GetDimensions(handle);
@@ -48,6 +44,5 @@ namespace Discord
             texture.Apply();
             return texture;
         }
-#endif
     }
 }

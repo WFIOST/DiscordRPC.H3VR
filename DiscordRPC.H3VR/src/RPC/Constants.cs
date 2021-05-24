@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Discord
+namespace DiscordRPC.Lib
 {
     static class Constants
     {
