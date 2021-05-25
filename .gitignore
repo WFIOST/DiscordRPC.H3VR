@@ -360,3 +360,5 @@ MigrationBackup/
 
 # VS Code
 .vscode/
+DiscordRPC.H3VR/lib/UnityEngine.dll
+DiscordRPC.H3VR/lib/UnityEngine.UI.dll

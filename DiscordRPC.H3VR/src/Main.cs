@@ -4,6 +4,7 @@ using BepInEx;
 using DiscordRPC.Lib;
 using FistVR;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 namespace DiscordRPC.H3VR
 {
@@ -50,7 +51,12 @@ namespace DiscordRPC.H3VR
 
         private void Awake()
         {
-            SceneManager.sceneLoaded += SetDefault;
+            SceneManager.sceneLoaded += NewSceneLoaded;
+            CurrentActivity = new Activity
+            {
+                Name    = "H3VR",
+                State   = $"Currently in {SceneManager.GetActiveScene().name}"
+            };
             Logger.LogInfo("Set default activity!");
         }
 
@@ -60,13 +66,18 @@ namespace DiscordRPC.H3VR
             UpdateRPC(CurrentActivity);
         }
 
-        private void SetDefault(Scene scene, LoadSceneMode mode)
+        private void NewSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            if (SCENE_SPECIFIC_ACTIVITY.ContainsKey(SceneManager.GetActiveScene().name))
+            {
+                CurrentActivity = SCENE_SPECIFIC_ACTIVITY[SceneManager.GetActiveScene().name];
+                return;
+            }
+
             CurrentActivity = new Activity
             {
-                Name    = "Modded H3VR",
-                State   = $"Currently in {SceneManager.GetActiveScene().name}",
-                Details = $"This user is holding {HeldObject}!"
+                Name    = "H3VR",
+                State   = $"Currently in {SceneManager.GetActiveScene().name}"
             };
         }
 
@@ -86,20 +97,31 @@ namespace DiscordRPC.H3VR
             );
         }
 
-        public string HeldObject
+        
+        public static readonly Dictionary<string, Activity> SCENE_SPECIFIC_ACTIVITY = new()
         {
-            get
-            {
-                var str = string.Empty;
-                var otherHand = GM.CurrentPlayerBody.LeftHand.GetComponent<FVRViveHand>().OtherHand;
-                if (otherHand.CurrentInteractable is FVRPhysicalObject currentInteractable)
+            { 
+                "",
+                new Activity 
                 {
-                    if (currentInteractable.ObjectWrapper != null)
-                        str = !IM.HasSpawnedID(currentInteractable.ObjectWrapper.ItemID) ? currentInteractable.ObjectWrapper.DisplayName : IM.GetSpawnerID(currentInteractable.ObjectWrapper.ItemID).DisplayName;
-                }
-
-                return str;
+                    Name = $"H3VR - Take and Hold", 
+                    State = $"Playing TNH - {GM.TNH_Manager.C.DisplayName}, {TNH_EQUIPMENTMODE_NAMES[GM.TNH_Manager.EquipmentMode]}, {TNH_HEALTHMODE_NAMES[GM.TNH_Manager.HealthMode]}",
+                    Details = $"On hold {GM.TNH_Manager.m_curHoldIndex}, with {GM.TNH_Manager.m_numTokens} tokens"
+                } 
             }
-        }
+        };
+
+        private static readonly Dictionary<TNHSetting_EquipmentMode, string> TNH_EQUIPMENTMODE_NAMES = new()
+        {
+            { TNHSetting_EquipmentMode.LimitedAmmo,     "Limited Ammo" },
+            { TNHSetting_EquipmentMode.Spawnlocking,    "Spawnlocked" }
+        };
+
+        private static readonly Dictionary<TNHSetting_HealthMode, string> TNH_HEALTHMODE_NAMES = new()
+        {
+            { TNHSetting_HealthMode.StandardHealth,     "Standard Health" },
+            { TNHSetting_HealthMode.HardcoreOneHit,     "One-hit" },
+            { TNHSetting_HealthMode.CustomHealth,       "Custom health" }
+        };
     }
 }
