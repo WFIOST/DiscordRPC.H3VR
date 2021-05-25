@@ -10,7 +10,7 @@ namespace DiscordRPC.H3VR
 {
     [
         BepInPlugin
-        (
+        ( 
             "com.wfiost.discordrpc.h3vr",
             "H3VR Discord RPC",
             "1.0.0"
@@ -31,18 +31,18 @@ namespace DiscordRPC.H3VR
             
             try
             {
-                LoadLibrary("BepInEx\\plugins\\DiscordRPC.H3VR\\" + Common.Constants.DiscordSDK.LIBRARY_FILENAME);
+                LoadLibrary("BepInEx\\plugins\\DiscordRPC.H3VR\\" + Common.DiscordSDK.LIBRARY_FILENAME);
             }
             catch (Exception e)
             {
-                Logger.LogFatal($"FAILED TO LOAD DISCORD GAME SDK LIBRARY ({Common.Constants.DiscordSDK.LIBRARY_FILENAME})\n\nEXCEPTION:\n{e}");
-                Logger.LogFatal($"MAKE SURE YOU HAVE {Common.Constants.DiscordSDK.LIBRARY_FILENAME} IN THE RIGHT LOCATION!");
+                Logger.LogFatal($"FAILED TO LOAD DISCORD GAME SDK LIBRARY ({Common.DiscordSDK.LIBRARY_FILENAME})\n\nEXCEPTION:\n{e}");
+                Logger.LogFatal($"MAKE SURE YOU HAVE {Common.DiscordSDK.LIBRARY_FILENAME} IN THE RIGHT LOCATION!");
                 return;
             }
             
-            Logger.LogInfo($"Successfully loaded Discord GameSDK library ({Common.Constants.DiscordSDK.LIBRARY_FILENAME})");
+            Logger.LogInfo($"Successfully loaded Discord GameSDK library ({Common.DiscordSDK.LIBRARY_FILENAME})");
             
-            Client = new Discord(Common.Constants.DiscordSDK.CLIENT_ID, (ulong)CreateFlags.NoRequireDiscord);
+            Client = new Discord(Common.DiscordSDK.CLIENT_ID, (ulong)CreateFlags.NoRequireDiscord);
             
             Logger.LogInfo($"Successfully created Client!");
             
@@ -52,6 +52,7 @@ namespace DiscordRPC.H3VR
         private void Awake()
         {
             SceneManager.sceneLoaded += NewSceneLoaded;
+
             CurrentActivity = new Activity
             {
                 Name    = "H3VR",
@@ -68,24 +69,33 @@ namespace DiscordRPC.H3VR
 
         private void NewSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (SCENE_SPECIFIC_ACTIVITY.ContainsKey(SceneManager.GetActiveScene().name))
+            Logger.LogInfo($"CURRENT SCENE: {scene.name}");
+
+            if (scene.name == "TakeAndHoldClassic")
             {
-                CurrentActivity = SCENE_SPECIFIC_ACTIVITY[SceneManager.GetActiveScene().name];
+                Logger.LogInfo($"SETTING ACTIVITY TO {scene.name}");
+                CurrentActivity = new Activity 
+                {
+                    State = $"Take and Hold - {GM.TNH_Manager.C.DisplayName}, {TNH_EQUIPMENTMODE_NAMES[GM.TNH_Manager.EquipmentMode]}, {TNH_HEALTHMODE_NAMES[GM.TNH_Manager.HealthMode]}",
+                    Details = $"On hold {GM.TNH_Manager.m_curHoldIndex}, with {GM.TNH_Manager.m_numTokens} tokens"
+                };
+
+                //CurrentActivity = SCENE_SPECIFIC_ACTIVITY[scene.name];
                 return;
             }
 
             CurrentActivity = new Activity
             {
                 Name    = "H3VR",
-                State   = $"Currently in {SceneManager.GetActiveScene().name}"
+                State   = $"Currently in {scene.name}"
             };
         }
 
-        public void UpdateRPC(Activity newActivity)
+        public void UpdateRPC(Activity activity)
         {
             Client.GetActivityManager().UpdateActivity
             (
-                newActivity,       
+                activity,       
                 result =>
                 {
                     if (result != Result.Ok)
@@ -97,19 +107,22 @@ namespace DiscordRPC.H3VR
             );
         }
 
-        
+        /*
         public static readonly Dictionary<string, Activity> SCENE_SPECIFIC_ACTIVITY = new()
         {
+            
             { 
-                "",
+                "TakeAndHoldClassic",
                 new Activity 
                 {
-                    Name = $"H3VR - Take and Hold", 
-                    State = $"Playing TNH - {GM.TNH_Manager.C.DisplayName}, {TNH_EQUIPMENTMODE_NAMES[GM.TNH_Manager.EquipmentMode]}, {TNH_HEALTHMODE_NAMES[GM.TNH_Manager.HealthMode]}",
+                    State = $"Take and Hold - {GM.TNH_Manager.C.DisplayName}, {TNH_EQUIPMENTMODE_NAMES[GM.TNH_Manager.EquipmentMode]}, {TNH_HEALTHMODE_NAMES[GM.TNH_Manager.HealthMode]}",
                     Details = $"On hold {GM.TNH_Manager.m_curHoldIndex}, with {GM.TNH_Manager.m_numTokens} tokens"
                 } 
             }
+            
         };
+        */
+
 
         private static readonly Dictionary<TNHSetting_EquipmentMode, string> TNH_EQUIPMENTMODE_NAMES = new()
         {

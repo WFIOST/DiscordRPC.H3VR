@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <TargetFramework>net35</TargetFramework>
         <LangVersion>9</LangVersion>
         <Nullable>enable</Nullable>
